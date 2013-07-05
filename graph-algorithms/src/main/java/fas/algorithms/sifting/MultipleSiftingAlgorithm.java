@@ -15,16 +15,16 @@ public class MultipleSiftingAlgorithm implements LinearArrangementAlgorithm {
     }
 
     public LinearArrangement linearArrangement(DirectedGraph<Integer, DefaultEdge> graph, Iterable<Integer> vertexes) {
-        LinearArrangement newArr = arrangementBah(graph, vertexes);
+        LinearArrangement newArr = sort(graph, vertexes);
         LinearArrangement oldArr = null;
         do {
             oldArr = newArr;
-            newArr = arrangementBah(graph, oldArr.asList());
+            newArr = sort(graph, oldArr.asList());
         } while (oldArr.score() != newArr.score());
         return newArr;
     }
 
-    LinearArrangement arrangementBah(DirectedGraph<Integer, DefaultEdge> graph, Iterable<Integer> vertexList) {
+    LinearArrangement sort(DirectedGraph<Integer, DefaultEdge> graph, Iterable<Integer> vertexList) {
         LinearArrangement arrangement = new LinearArrangement(graph);
         for (Integer vertex : vertexList) {
             int[] scores = arrangement.addScore(vertex);

@@ -4,26 +4,27 @@ import static java.lang.String.format;
 import static main.LinearArrangementWrapper.wrap;
 
 import java.io.File;
-import java.util.Random;
+import java.util.Date;
 import java.util.Set;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-import fas.algorithms.eades.EadesAlgorithm;
 import fas.algorithms.eades.LinearArrangementAlgorithm;
 import fas.algorithms.saab.ArcSetAlgorithm;
-import fas.algorithms.saab.SaabAlgorithm;
+import fas.algorithms.sifting.KobilanskiChanasAlgorithm;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 //        run(new KwiksortAlgorithm1(new Random()), 10);
 //        run(new KwiksortAlgorithm2(new Random()), 10);
 //        run(new MultipleSiftingAlgorithm(), 1);
-//        run(new KobilanskiChanasAlgorithm(), 1);
-        run(new EadesAlgorithm(), 1);
-        run(new SaabAlgorithm(new Random()), 1);
+//        Thread.sleep(10000);
+        run(new KobilanskiChanasAlgorithm(), 1);
+//        run(new EadesAlgorithm(), 1);
+//        run(new SaabAlgorithm(new Random()), 10);
+
     }
     
     private static void run(LinearArrangementAlgorithm alg, int iteration) {
@@ -38,10 +39,12 @@ public class Main {
 
     private static void iterate(ArcSetAlgorithm alg) {
         GraphLoader graphLoader = new GraphLoader();
-        File file = new File("bin/main/P50-100.dat").getAbsoluteFile();
-        //File file = new File("bin/main/P1000-25000.dat").getAbsoluteFile();
+//        File file = new File("bin/main/P50-100.dat").getAbsoluteFile();
+        File file = new File("bin/main/P1000-25000.dat").getAbsoluteFile();
         DirectedGraph<Integer, DefaultEdge> graph = graphLoader.loadDirectedGraph(file);
+        Date start = new Date();
         Set<DefaultEdge> fas = alg.feedbackArcSet(graph);
+        System.out.println((new Date().getTime() - start.getTime()) / 1000.0);
         System.out.printf("%s, %s, Score %s ", hasCicle(graph), graph.edgeSet().size(), fas.size());
         graph.removeAllEdges(fas);
         System.out.println(hasCicle(graph));

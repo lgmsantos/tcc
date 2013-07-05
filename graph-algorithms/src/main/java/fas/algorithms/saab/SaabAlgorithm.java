@@ -50,9 +50,7 @@ public class SaabAlgorithm implements ArcSetAlgorithm {
         Set<DefaultEdge> arcSet = new HashSet<>();
         for (Integer v1 : sub1.vertexSet())
             for (Integer v2 : sub2.vertexSet())
-                if (graph.containsEdge(v1, v2))
-                    arcSet.add(graph.getEdge(v1, v2));
-                else if (graph.containsEdge(v2, v1))
+                if (graph.containsEdge(v2, v1))
                     arcSet.add(graph.getEdge(v2, v1));
         return arcSet;
     }

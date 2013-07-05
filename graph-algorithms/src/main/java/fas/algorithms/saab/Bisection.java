@@ -35,7 +35,7 @@ class Bisection {
 
     public int cost() {
         int cost = 0;
-        if(setSize[0] == 0 || setSize[1] == 0)
+        if (setSize[0] == 0 || setSize[1] == 0)
             return MAX_VALUE;
         for (DefaultEdge e : graph.edgeSet())
             if (set[graph.getEdgeSource(e)] != set[graph.getEdgeTarget(e)])
@@ -61,7 +61,7 @@ class Bisection {
         }
 
         if (setSize[0] != setSize[1]) {
-            double alpha = 0.9 * graph.vertexSet().size();
+            double alpha = 0.6 * graph.vertexSet().size();
             int biggerSet = setSize[0] > setSize[1] ? 0 : 1;
             while (setSize[biggerSet] > alpha) {
                 move(qs[biggerSet].poll());
@@ -72,15 +72,22 @@ class Bisection {
     private int gain(Integer v) {
         int gain = 0;
         
-        for(DefaultEdge e: graph.incomingEdgesOf(v))
-            gain += (set[v] != set[graph.getEdgeSource(e)]) ? 1 : -1;
-        for(DefaultEdge e: graph.outgoingEdgesOf(v))
-            gain += (set[v] != set[graph.getEdgeTarget(e)]) ? 1 : -1;
-        
+        if (set[v] == 0) {
+            for (DefaultEdge e : graph.incomingEdgesOf(v))
+                gain += (set[graph.getEdgeSource(e)] == 1) ? 1 : 0;
+            for (DefaultEdge e : graph.outgoingEdgesOf(v))
+                gain += (set[graph.getEdgeTarget(e)] == 0) ? -1 : 0;
+        } else {
+            for (DefaultEdge e : graph.incomingEdgesOf(v))
+                gain += (set[graph.getEdgeSource(e)] == 1) ? -1 : 0;
+            for (DefaultEdge e : graph.outgoingEdgesOf(v))
+                gain += (set[graph.getEdgeTarget(e)] == 0) ? 1 : 0;
+        }
+
         return gain;
     }
-    
-    public Bisection copy(){
+
+    public Bisection copy() {
         Bisection copy = new Bisection(random, graph);
         copy.set = copyOf(set, set.length);
         copy.setSize = copyOf(setSize, setSize.length);
@@ -89,8 +96,8 @@ class Bisection {
 
     public List<Set<Integer>> asSetList() {
         @SuppressWarnings("unchecked")
-        Set<Integer>[] sets = new Set[]{ new HashSet<>(), new HashSet<>() };
-        for(Integer v: graph.vertexSet())
+        Set<Integer>[] sets = new Set[] { new HashSet<>(), new HashSet<>() };
+        for (Integer v : graph.vertexSet())
             sets[set[v]].add(v);
         return asList(sets);
     }
