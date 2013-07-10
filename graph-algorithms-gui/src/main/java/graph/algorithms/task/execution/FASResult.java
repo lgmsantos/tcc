@@ -20,6 +20,18 @@ public class FASResult implements Comparable<FASResult> {
         this.elapsed = elapsed;
         this.fasSize = fasSize;
     }
+    
+    public int getFasSize() {
+        return fasSize;
+    }
+    
+    public int getVertexSetSize() {
+        return vertexSetSize;
+    }
+    
+    public int getEdgeSetSize() {
+        return edgeSetSize;
+    }
 
     @Override
     public String toString() {
@@ -31,9 +43,11 @@ public class FASResult implements Comparable<FASResult> {
     public int compareTo(FASResult other) {
         List<Comparable> order1 = naturalOrder();
         List<Comparable> order2 = other.naturalOrder();
-        for (int i = 0; i < order1.size(); i++)
-            if (order1.get(i).compareTo(order2.get(i)) != 0)
-                return order1.get(i).compareTo(order2.get(i));
+        for (int i = 0; i < order1.size(); i++) {
+            int cmp = order1.get(i).compareTo(order2.get(i));
+            if (cmp != 0)
+                return cmp;
+        }
         return 0;
     }
 

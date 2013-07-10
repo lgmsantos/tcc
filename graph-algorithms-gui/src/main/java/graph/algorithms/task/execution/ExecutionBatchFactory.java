@@ -13,22 +13,20 @@ public class ExecutionBatchFactory {
 
     private TaskList taskList;
     private List<GraphInput> inputs;
-    private ExecutionSignal signal;
 
-    public ExecutionBatchFactory(TaskList taskList, ExecutionSignal signal) {
+    public ExecutionBatchFactory(TaskList taskList) {
         this.taskList = taskList;
-        this.signal = signal;
     }
 
     public ExecutionBatch createBatch() {
-        return new ExecutionBatch(executions(), signal);
+        return new ExecutionBatch(executions());
     }
 
-    private List<Execution> executions() {
-        List<Execution> executions = new ArrayList<>();
+    private List<Execution<?>> executions() {
+        List<Execution<?>> executions = new ArrayList<>();
         for (Task<GraphInput> task : taskList.getSelectedValuesList())
             for (GraphInput input : inputs())
-                executions.add(new Execution(task, input));
+                executions.add(new Execution<>(task, input));
         sort(executions);
         return executions;
     }
@@ -39,7 +37,7 @@ public class ExecutionBatchFactory {
             String fileName = getClass().getResource("/input").getFile();
             for (File file : new File(fileName).listFiles())
                 inputs.add(new GraphInput(file));
-        }
+         }
         return inputs;
     }
 

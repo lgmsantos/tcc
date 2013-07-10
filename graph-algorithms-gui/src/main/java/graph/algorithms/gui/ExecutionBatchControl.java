@@ -2,6 +2,7 @@ package graph.algorithms.gui;
 
 import graph.algorithms.task.execution.ExecutionBatch;
 import graph.algorithms.task.execution.ExecutionBatchFactory;
+import graph.algorithms.task.execution.Executor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,15 @@ public class ExecutionBatchControl {
     private ExecutionBatchFactory executionBatchFactory;
     private ExecutionList executionList;
     private int batchPointer;
+    private Executor executor;
+    private ExecutionChartPanel chartPanel;
 
-    public ExecutionBatchControl(ExecutionList executionList, ExecutionBatchFactory executionBatchFactory) {
+    public ExecutionBatchControl(ExecutionList executionList, ExecutionBatchFactory executionBatchFactory,
+            Executor executor, ExecutionChartPanel chartPanel) {
         this.executionList = executionList;
         this.executionBatchFactory = executionBatchFactory;
+        this.executor = executor;
+        this.chartPanel = chartPanel;
         executionBatches = new ArrayList<ExecutionBatch>();
         batchPointer = 0;
     }
@@ -29,14 +35,15 @@ public class ExecutionBatchControl {
     private void refreshExecutionList() {
         executionList.setListData(currentBatch().getExecutions());
         executionList.repaint();
+        chartPanel.plot(currentBatch().getExecutions());
     }
 
     public void runBatch() {
-        currentBatch().run();
+        executor.executeBatch(currentBatch());
     }
 
     public void stopBatch() {
-        currentBatch().stop();
+        executor.stop();
     }
 
     private ExecutionBatch currentBatch() {
@@ -46,8 +53,7 @@ public class ExecutionBatchControl {
     public void left() {
         if (executionBatches.size() == 0)
             return;
-        batchPointer -= 1;
-        batchPointer += executionBatches.size();
+        batchPointer += -1 + executionBatches.size();
         batchPointer %= executionBatches.size();
         refreshExecutionList();
     }
@@ -65,11 +71,11 @@ public class ExecutionBatchControl {
             return "00/00";
         return String.format("%02d/%02d", batchPointer + 1, executionBatches.size());
     }
-    
+
     public List<ExecutionBatch> getExecutionBatches() {
         return executionBatches;
     }
-    
+
     public void setExecutionBatches(List<ExecutionBatch> executionBatches) {
         this.executionBatches = executionBatches;
     }

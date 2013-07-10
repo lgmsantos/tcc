@@ -8,8 +8,8 @@ import java.util.Set;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
+import fas.algorithms.ArcSetAlgorithm;
 import fas.algorithms.eades.LinearArrangementAlgorithm;
-import fas.algorithms.saab.ArcSetAlgorithm;
 
 public class LinearArrangementWrapper implements ArcSetAlgorithm {
 
@@ -19,7 +19,7 @@ public class LinearArrangementWrapper implements ArcSetAlgorithm {
         return new LinearArrangementWrapper(algorithm);
     }
     
-    private LinearArrangementWrapper(LinearArrangementAlgorithm algorithm) {
+    public LinearArrangementWrapper(LinearArrangementAlgorithm algorithm) {
         this.algorithm = algorithm;
     }
 

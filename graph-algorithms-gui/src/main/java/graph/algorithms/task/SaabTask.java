@@ -1,12 +1,13 @@
 package graph.algorithms.task;
 
 import java.util.Date;
-import java.util.Random;
 import java.util.Set;
 
 import org.jgrapht.graph.DefaultEdge;
 
+import fas.algorithms.saab.SEParams;
 import fas.algorithms.saab.SaabAlgorithm;
+import fas.algorithms.saab.StochasticEvolution;
 import graph.algorithms.task.execution.FASResult;
 
 public class SaabTask implements Task<GraphInput>{
@@ -14,12 +15,12 @@ public class SaabTask implements Task<GraphInput>{
     private SaabAlgorithm algorithm;
 
     public SaabTask() {
-        algorithm = new SaabAlgorithm(new Random());
+        algorithm = new SaabAlgorithm(new StochasticEvolution(new SEParams(400, 10, 1)));
     }   
     
     @Override
     public int iterationCount() {
-        return 50;
+        return 10;
     }
 
     @Override

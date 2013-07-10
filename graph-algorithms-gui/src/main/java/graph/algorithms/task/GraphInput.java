@@ -16,8 +16,11 @@ public class GraphInput implements TaskInput<GraphInput>, Serializable {
     
     private DirectedGraph<Integer, DefaultEdge> graph;
 
+    private File file;
+
     public GraphInput(File file) {
-        graph = new GraphLoader().loadDirectedGraph(file);            
+        this.file = file;
+        getGraph();
     }
 
     @Override
@@ -34,14 +37,16 @@ public class GraphInput implements TaskInput<GraphInput>, Serializable {
     }
 
     public int edgeSetSize() {
-        return graph.edgeSet().size();
+        return getGraph().edgeSet().size();
     }
 
     public int vertexSetSize() {
-        return graph.vertexSet().size();
+        return getGraph().vertexSet().size();
     }
 
     public DirectedGraph<Integer, DefaultEdge> getGraph() {
+        if(graph == null)
+            graph = new GraphLoader().loadDirectedGraph(file);        
         return graph;
     }
 }

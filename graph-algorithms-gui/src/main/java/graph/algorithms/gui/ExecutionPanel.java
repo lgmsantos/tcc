@@ -10,7 +10,7 @@ public class ExecutionPanel extends JPanel{
     private static final long serialVersionUID = 1L;
 
     public ExecutionPanel(ExecutionList executionList) {
-        setLayout(new MigLayout("fill", "", "0[]0"));
+        setLayout(new MigLayout("fill", "", ""));
         JScrollPane scrollPane = new JScrollPane(executionList);
         add(scrollPane, "grow");
     }

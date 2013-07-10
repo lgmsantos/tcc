@@ -1,104 +1,117 @@
 package fas.algorithms.saab;
 
-import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Math.random;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.copyOf;
-import static java.util.Collections.max;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Set;
 
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-class Bisection {
+public class Bisection {
 
-    private DirectedGraph<Integer, DefaultEdge> graph;
-    private Random random;
-    private int[] set;
-    private int[] setSize;
+    private SaabGraph graph;
+    private Set<Integer> set1;
+    private Set<Integer> set2;
+    private int cost;
+    
+    private Bisection() {
+    }
 
-    public Bisection(Random random, DirectedGraph<Integer, DefaultEdge> graph) {
-        this.random = random;
+    public Bisection(SaabGraph graph) {
         this.graph = graph;
-        set = new int[max(graph.vertexSet()) + 1];
-        setSize = new int[2];
-        for (Integer v : graph.vertexSet()) {
-            set[v] = random.nextInt(2);
-            setSize[set[v]]++;
-        }
+        set1 = new HashSet<>();
+        set2 = new HashSet<>();
+        initializeSets();
+        cost = fas().size();
     }
 
-    public int cost() {
-        int cost = 0;
-        if (setSize[0] == 0 || setSize[1] == 0)
-            return MAX_VALUE;
-        for (DefaultEdge e : graph.edgeSet())
-            if (set[graph.getEdgeSource(e)] != set[graph.getEdgeTarget(e)])
-                cost++;
-        return cost;
-    }
-
-    private void move(Integer v) {
-        setSize[set[v]]--;
-        ++set[v];
-        set[v] %= 2;
-        setSize[set[v]]++;
+    private void initializeSets() {
+        set2.addAll(graph.vertexSet());
+        forever:
+        while(true)
+            for(Integer v: graph.vertexSet())
+                if(random() < .5){
+                    move(v);
+                    if(set1.size() >= set2.size())
+                        break forever;
+                }
     }
 
     public void perturb(int p) {
-        @SuppressWarnings("unchecked")
-        Queue<Integer>[] qs = new Queue[] { new LinkedList<>(), new LinkedList<>() };
-
-        for (Integer v : graph.vertexSet()) {
-            if (gain(v) > -random.nextInt(-p + 1))
+        Queue<Integer> q1 = new LinkedList<>();
+        Queue<Integer> q2 = new LinkedList<>();
+        for (Integer v : graph.vertexSet())
+            if (gain(v) > randint(p)) {
                 move(v);
-            qs[set[v]].add(v);
-        }
-
-        if (setSize[0] != setSize[1]) {
-            double alpha = 0.6 * graph.vertexSet().size();
-            int biggerSet = setSize[0] > setSize[1] ? 0 : 1;
-            while (setSize[biggerSet] > alpha) {
-                move(qs[biggerSet].poll());
+                (set1.contains(v) ? q1 : q2).add(v);
             }
-        }
+
+        Queue<Integer> q = set1.size() > set2.size() ? q1 : q2;
+        Set<Integer> v = set1.size() > set2.size() ? set1 : set2;
+        while (v.size() > 0.6 * graph.vertexSet().size() && !q.isEmpty())
+            move(q.poll());
+    }
+
+    private void move(Integer v) {
+        cost -= gain(v);
+        if (set1.contains(v))
+            swap(v, set1, set2);
+        else
+            swap(v, set2, set1);
+    }
+
+    private void swap(Integer v, Set<Integer> orig, Set<Integer> dest) {
+        orig.remove(v);
+        dest.add(v);
     }
 
     private int gain(Integer v) {
         int gain = 0;
-        
-        if (set[v] == 0) {
-            for (DefaultEdge e : graph.incomingEdgesOf(v))
-                gain += (set[graph.getEdgeSource(e)] == 1) ? 1 : 0;
-            for (DefaultEdge e : graph.outgoingEdgesOf(v))
-                gain += (set[graph.getEdgeTarget(e)] == 0) ? -1 : 0;
-        } else {
-            for (DefaultEdge e : graph.incomingEdgesOf(v))
-                gain += (set[graph.getEdgeSource(e)] == 1) ? -1 : 0;
-            for (DefaultEdge e : graph.outgoingEdgesOf(v))
-                gain += (set[graph.getEdgeTarget(e)] == 0) ? 1 : 0;
-        }
+        int newSet = set1.contains(v) ? 2 : 1;
+        for (Integer t : graph.targetsOf(v))
+            if(set1.contains(t))
+                gain += (newSet == 1) ? 1 : -1;
 
+        for(Integer s: graph.sourcesOf(v))
+            if(set2.contains(s))
+                gain += (newSet == 1) ? -1 : 1;
         return gain;
     }
 
+    private int randint(int p) {
+        return (int) (random() * (p + 1));
+    }
+    
+    public int cost() {
+        return cost;
+    }
+
     public Bisection copy() {
-        Bisection copy = new Bisection(random, graph);
-        copy.set = copyOf(set, set.length);
-        copy.setSize = copyOf(setSize, setSize.length);
+        Bisection copy = new Bisection();
+        copy.graph = graph;
+        copy.set1 = new HashSet<>(set1);
+        copy.set2 = new HashSet<>(set2);
+        copy.cost = cost;
         return copy;
     }
 
-    public List<Set<Integer>> asSetList() {
-        @SuppressWarnings("unchecked")
-        Set<Integer>[] sets = new Set[] { new HashSet<>(), new HashSet<>() };
-        for (Integer v : graph.vertexSet())
-            sets[set[v]].add(v);
-        return asList(sets);
+    public List<SaabGraph> asSetList() {
+        return asList(graph.subgraph(set1), graph.subgraph(set2));
     }
+
+    public Set<DefaultEdge> fas() {
+        Set<DefaultEdge> fas = new HashSet<>();
+        for (DefaultEdge e : graph.edgeSet()) {
+            Integer s = graph.getEdgeSource(e);
+            Integer t = graph.getEdgeTarget(e);
+            if (set2.contains(s) && set1.contains(t))
+                fas.add(e);
+        }
+        return fas;
+    }
+    
 }

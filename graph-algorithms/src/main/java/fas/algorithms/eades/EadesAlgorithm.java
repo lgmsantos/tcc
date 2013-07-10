@@ -51,4 +51,9 @@ public class EadesAlgorithm implements LinearArrangementAlgorithm {
         graph.remove(vertex);
         arrangement[position] = vertex;
     }
+    
+    @Override
+    public String toString() {
+        return "Eades-Lin-Smyth";
+    }
 }

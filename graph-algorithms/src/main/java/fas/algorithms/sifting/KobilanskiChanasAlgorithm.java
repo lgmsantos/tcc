@@ -27,6 +27,9 @@ public class KobilanskiChanasAlgorithm implements LinearArrangementAlgorithm{
         return newArr.asList();
     }
 
-    
+    @Override
+    public String toString() {
+        return "Kobylanski-Chanas";
+    }
 
 }

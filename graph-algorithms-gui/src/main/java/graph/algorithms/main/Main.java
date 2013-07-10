@@ -2,6 +2,7 @@ package graph.algorithms.main;
 
 import graph.algorithms.gui.ControlPanel;
 import graph.algorithms.gui.ExecutionBatchControl;
+import graph.algorithms.gui.ExecutionChartPanel;
 import graph.algorithms.gui.ExecutionList;
 import graph.algorithms.gui.ExecutionPanel;
 import graph.algorithms.gui.MainFrame;
@@ -13,7 +14,9 @@ import graph.algorithms.task.KobylanskiTask;
 import graph.algorithms.task.SaabTask;
 import graph.algorithms.task.Task;
 import graph.algorithms.task.execution.ExecutionBatchFactory;
+import graph.algorithms.task.execution.ExecutionLoader;
 import graph.algorithms.task.execution.ExecutionSignal;
+import graph.algorithms.task.execution.Executor;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -75,6 +78,11 @@ public class Main implements Startable {
         container.addComponent(ExecutionBatchFactory.class);
         container.addComponent(ExecutionBatchControl.class);
         container.addComponent(ExecutionSignal.class);
+        container.addComponent(Executor.class);
+        container.addComponent(ExecutionLoader.class);
+        container.addComponent(ExecutionChartPanel.class);
+        container.addComponent(ChartConverter.class);
+        
         return container;
     }
 

@@ -1,4 +1,4 @@
-package fas.algorithms.saab;
+package fas.algorithms;
 
 import java.util.Set;
 
