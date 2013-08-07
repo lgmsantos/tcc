@@ -8,6 +8,7 @@ import graph.algorithms.gui.ExecutionPanel;
 import graph.algorithms.gui.MainFrame;
 import graph.algorithms.gui.TaskList;
 import graph.algorithms.gui.TaskPanel;
+import graph.algorithms.task.EadesKobylanskiTask;
 import graph.algorithms.task.EadesTask;
 import graph.algorithms.task.GraphInput;
 import graph.algorithms.task.KobylanskiTask;
@@ -20,7 +21,7 @@ import graph.algorithms.task.execution.Executor;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.UIManager;
@@ -48,7 +49,7 @@ public class Main implements Startable {
     private static void setupMiniframe() {
         MiniFrame miniFrame = new MiniFrame();
         miniFrame.addActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
@@ -82,7 +83,7 @@ public class Main implements Startable {
         container.addComponent(ExecutionLoader.class);
         container.addComponent(ExecutionChartPanel.class);
         container.addComponent(ChartConverter.class);
-        
+
         return container;
     }
 
@@ -102,8 +103,12 @@ public class Main implements Startable {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
-        List<Task<GraphInput>> listData = Arrays.asList(new EadesTask(),  new KobylanskiTask(), new SaabTask());        
-        taskList.setListData(listData.toArray(new Task[0]));
+        List<Task<GraphInput>> tasks = new ArrayList<>();
+        tasks.add(new EadesTask());
+        tasks.add(new KobylanskiTask());
+        tasks.add(new SaabTask());
+        tasks.add(new EadesKobylanskiTask());
+        taskList.setListData(tasks.toArray(new Task[0]));
     }
 
     @Override

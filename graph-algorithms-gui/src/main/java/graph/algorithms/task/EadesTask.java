@@ -21,7 +21,7 @@ public class EadesTask implements Task<GraphInput>{
     
     @Override
     public int iterationCount() {
-        return 10;
+        return 1;
     }
 
     @Override

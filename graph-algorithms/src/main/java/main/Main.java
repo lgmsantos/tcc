@@ -11,17 +11,18 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedSubgraph;
 import org.picocontainer.DefaultPicoContainer;
-import org.picocontainer.Startable;
 import org.picocontainer.behaviors.Caching;
+import org.picocontainer.parameters.ComponentParameter;
 
 import fas.algorithms.ArcSetAlgorithm;
+import fas.algorithms.EadesKobylanskiAlgorithmm;
 import fas.algorithms.eades.EadesAlgorithm;
 import fas.algorithms.saab.SEParams;
 import fas.algorithms.saab.SaabAlgorithm;
 import fas.algorithms.saab.StochasticEvolution;
 import fas.algorithms.sifting.KobilanskiChanasAlgorithm;
 
-public class Main implements Startable {
+public class Main {
 
     private ArcSetAlgorithm algorithm;
     private DirectedGraph<Integer, DefaultEdge> graph;
@@ -33,8 +34,7 @@ public class Main implements Startable {
         this.graph = graph;
     }
 
-    @Override
-    public void start() {
+    public void run() {
         long start = new Date().getTime();
         arcSet = algorithm.feedbackArcSet(graph);
         miliseconds = (new Date().getTime() - start) / 1000.0;
@@ -45,26 +45,25 @@ public class Main implements Startable {
     }
 
     @Override
-    public void stop() {
-    }
-
-    @Override
     public String toString() {
         return String.format("%s(%s, %.3f)", algorithm, arcSet.size(), miliseconds);
     }
 
     public static void main(String[] args) throws InterruptedException {
-        while(true)
-            runGraph("P1000-25000.dat");
+        String name = "P50-200.dat";
+        DirectedGraph<Integer, DefaultEdge> graph = loadGraph(name);
+        while (true) {
+            System.out.println(runSaab(graph));
+            System.out.println(runTeste(graph));
+            System.out.println(runKC(graph));
+        }
     }
 
-    private static void runGraph(String name) {
+    static DirectedGraph<Integer, DefaultEdge> loadGraph(String name) {
         GraphLoader loader = new GraphLoader();
         String fileName = Main.class.getResource(name).getFile();
         DirectedGraph<Integer, DefaultEdge> graph = loader.loadDirectedGraph(new File(fileName));
-        System.out.printf("(%s, %s) %s ", graph.vertexSet().size(), graph.edgeSet().size(), d(graph));
-        Main s = runSaab(graph);
-        System.out.println(s);
+        return graph;
     }
 
     private static String d(DirectedGraph<Integer, DefaultEdge> g) {
@@ -80,8 +79,23 @@ public class Main implements Startable {
         container.addComponent(KobilanskiChanasAlgorithm.class);
         container.addComponent(LinearArrangementWrapper.class);
         container.addComponent(graph);
-        container.start();
-        return container.getComponent(Main.class);
+        Main main = container.getComponent(Main.class);
+        main.run();
+        return main;
+    }
+
+    private static Main runTeste(DirectedGraph<Integer, DefaultEdge> graph) {
+        DefaultPicoContainer container = new DefaultPicoContainer(new Caching());
+        container.addComponent(Main.class);
+        container.addComponent(KobilanskiChanasAlgorithm.class);
+        container.addComponent(EadesAlgorithm.class);
+        container.addComponent(EadesKobylanskiAlgorithmm.class);
+        container.addComponent(ArcSetAlgorithm.class, LinearArrangementWrapper.class, new ComponentParameter(
+                EadesKobylanskiAlgorithmm.class));
+        container.addComponent(graph);
+        Main main = container.getComponent(Main.class);
+        main.run();
+        return main;
     }
 
     private static Main runELS(DirectedGraph<Integer, DefaultEdge> graph) {
@@ -90,8 +104,9 @@ public class Main implements Startable {
         container.addComponent(EadesAlgorithm.class);
         container.addComponent(LinearArrangementWrapper.class);
         container.addComponent(graph);
-        container.start();
-        return container.getComponent(Main.class);
+        Main main = container.getComponent(Main.class);
+        main.run();
+        return main;
     }
 
     private static Main runSaab(DirectedGraph<Integer, DefaultEdge> graph) {
@@ -99,11 +114,12 @@ public class Main implements Startable {
         container.addComponent(Main.class);
         container.addComponent(new Random());
         container.addComponent(StochasticEvolution.class);
-        container.addComponent(new SEParams(1000, 10, 1));
+        container.addComponent(new SEParams(10, 2));
         container.addComponent(SaabAlgorithm.class);
         container.addComponent(graph);
-        container.start();
-        return container.getComponent(Main.class);
+        Main main = container.getComponent(Main.class);
+        main.run();
+        return main;
     }
 
     private static boolean hasCicle(DirectedGraph<Integer, DefaultEdge> graph) {

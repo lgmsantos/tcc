@@ -7,15 +7,12 @@ import java.util.List;
 
 import main.FASUtils;
 
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
-
 public class LinearArrangement {
 
-    private DirectedGraph<Integer, DefaultEdge> graph;
+    private SiftingGraphWrapper graph;
     private List<Integer> elements;
 
-    public LinearArrangement(DirectedGraph<Integer, DefaultEdge> graph) {
+    public LinearArrangement(SiftingGraphWrapper graph) {
         this.graph = graph;
         elements = new ArrayList<>();
     }
@@ -63,7 +60,7 @@ public class LinearArrangement {
 //                score++;
 //        return score;
 
-        return FASUtils.feedbackArcSetFromPartialArrangement(graph, elements).size();
+        return FASUtils.feedbackArcSetFromPartialArrangement(graph.baseGraph(), elements).size();
     }
 
 }

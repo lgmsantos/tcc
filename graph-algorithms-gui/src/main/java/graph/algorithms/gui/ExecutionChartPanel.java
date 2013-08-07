@@ -2,7 +2,7 @@ package graph.algorithms.gui;
 
 import static java.awt.Color.GRAY;
 import static javax.swing.BorderFactory.createLineBorder;
-import static org.jfree.chart.ChartFactory.createLineChart;
+import static org.jfree.chart.ChartFactory.createBarChart3D;
 import static org.jfree.chart.plot.PlotOrientation.VERTICAL;
 import graph.algorithms.main.ChartConverter;
 import graph.algorithms.task.execution.Execution;
@@ -17,11 +17,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.CategoryDataset;
 
-public class ExecutionChartPanel extends JPanel{
+public class ExecutionChartPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private ChartConverter chartConverter;
-    
+
     public ExecutionChartPanel(ChartConverter chartConverter) {
         this.chartConverter = chartConverter;
         setLayout(new MigLayout("fill", "", ""));
@@ -31,7 +31,10 @@ public class ExecutionChartPanel extends JPanel{
     public void plot(List<Execution<?>> executions) {
         CategoryDataset dataset = chartConverter.toDataSet(executions);
         removeAll();
-        JFreeChart chart = createLineChart("", "Edges Size", "FAS Size", dataset, VERTICAL, true, false, false);
+        // JFreeChart chart = createLineChart("", "Edges Size", "FAS Size",
+        // dataset, VERTICAL, true, false, false);
+        JFreeChart chart = createBarChart3D("", "Edges Size", "FAS Size", dataset, VERTICAL, true, false, false);
+
         add(new ChartPanel(chart), "grow");
     }
 }

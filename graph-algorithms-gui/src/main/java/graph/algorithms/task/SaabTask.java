@@ -15,12 +15,12 @@ public class SaabTask implements Task<GraphInput>{
     private SaabAlgorithm algorithm;
 
     public SaabTask() {
-        algorithm = new SaabAlgorithm(new StochasticEvolution(new SEParams(400, 10, 1)));
+        algorithm = new SaabAlgorithm(new StochasticEvolution(new SEParams(10, 1)));
     }   
     
     @Override
     public int iterationCount() {
-        return 10;
+        return 50;
     }
 
     @Override

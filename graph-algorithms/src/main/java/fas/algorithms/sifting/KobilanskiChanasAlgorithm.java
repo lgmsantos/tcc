@@ -9,21 +9,27 @@ import org.jgrapht.graph.DefaultEdge;
 
 import fas.algorithms.eades.LinearArrangementAlgorithm;
 
-
-public class KobilanskiChanasAlgorithm implements LinearArrangementAlgorithm{
-
+public class KobilanskiChanasAlgorithm implements LinearArrangementAlgorithm {
     @Override
     public List<Integer> linearArrangement(DirectedGraph<Integer, DefaultEdge> graph) {
+        return linearArrangement(graph, graph.vertexSet());
+    }
+
+    public List<Integer> linearArrangement(DirectedGraph<Integer, DefaultEdge> graph, Iterable<Integer> initialOrder) {
+        return linearArrangement(new SiftingGraphWrapper(graph), initialOrder);
+    }
+
+    public List<Integer> linearArrangement(SiftingGraphWrapper graph, Iterable<Integer> initialOrder) {
         MultipleSiftingAlgorithm multipleSifting = new MultipleSiftingAlgorithm();
-        
-        LinearArrangement newArr = multipleSifting.linearArrangement(graph, graph.vertexSet());
+
+        LinearArrangement newArr = multipleSifting.linearArrangement(graph, initialOrder);
         LinearArrangement oldArr = null;
-        do{
+        do {
             oldArr = newArr;
             List<Integer> arrayList = new ArrayList<>(oldArr.asList());
             Collections.reverse(arrayList);
             newArr = multipleSifting.linearArrangement(graph, arrayList);
-        }while(oldArr.score() != newArr.score());
+        } while (oldArr.score() != newArr.score());
         return newArr.asList();
     }
 

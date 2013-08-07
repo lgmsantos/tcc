@@ -11,10 +11,14 @@ public class MultipleSiftingAlgorithm implements LinearArrangementAlgorithm {
 
     @Override
     public List<Integer> linearArrangement(DirectedGraph<Integer, DefaultEdge> graph) {
+        return linearArrangement(new SiftingGraphWrapper(graph));
+    }
+    
+    public List<Integer> linearArrangement(SiftingGraphWrapper graph) {
         return linearArrangement(graph, graph.vertexSet()).asList();
     }
 
-    public LinearArrangement linearArrangement(DirectedGraph<Integer, DefaultEdge> graph, Iterable<Integer> vertexes) {
+    public LinearArrangement linearArrangement(SiftingGraphWrapper graph, Iterable<Integer> vertexes) {
         LinearArrangement newArr = sort(graph, vertexes);
         LinearArrangement oldArr = null;
         do {
@@ -24,7 +28,7 @@ public class MultipleSiftingAlgorithm implements LinearArrangementAlgorithm {
         return newArr;
     }
 
-    LinearArrangement sort(DirectedGraph<Integer, DefaultEdge> graph, Iterable<Integer> vertexList) {
+    LinearArrangement sort(SiftingGraphWrapper graph, Iterable<Integer> vertexList) {
         LinearArrangement arrangement = new LinearArrangement(graph);
         for (Integer vertex : vertexList) {
             int[] scores = arrangement.addScore(vertex);

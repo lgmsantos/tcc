@@ -6,17 +6,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+
 import org.jgrapht.graph.DefaultEdge;
 
+import fas.algorithms.EadesKobylanskiAlgorithmm;
+import fas.algorithms.eades.EadesAlgorithm;
+import fas.algorithms.eades.LinearArrangementAlgorithm;
 import fas.algorithms.sifting.KobilanskiChanasAlgorithm;
 import graph.algorithms.task.execution.FASResult;
 
-public class KobylanskiTask implements Task<GraphInput>{
+public class EadesKobylanskiTask implements Task<GraphInput>{
 
-    private KobilanskiChanasAlgorithm algorithm;
+    private LinearArrangementAlgorithm algorithm;
 
-    public KobylanskiTask() {
-        algorithm = new KobilanskiChanasAlgorithm();
+    public EadesKobylanskiTask() {
+        algorithm = new EadesKobylanskiAlgorithmm(new KobilanskiChanasAlgorithm(), new EadesAlgorithm());
     }
     
     @Override
@@ -35,6 +39,6 @@ public class KobylanskiTask implements Task<GraphInput>{
 
     @Override
     public String toString() {
-        return "Kobylanski";
+        return "Eades-Kobylanski";
     }    
 }
